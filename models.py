@@ -12,6 +12,8 @@ from sklearn.preprocessing import (
     QuantileTransformer
 )
 
+from joblib import dump
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd 
@@ -31,37 +33,29 @@ x = df.drop(columns=target_column)
 y = df[target_column]
 robust_columns = df.columns.difference(target_column + one_hot_encoder_column + ordinal_encoder_column)
 
-pipeline_robust = Pipeline(
-    steps=[
-        ('robust_scaler', RobustScaler()),
-        ('poly', PolynomialFeatures(degree=1, include_bias=False))
-    ]
-)
+pipeline_robust = Pipeline(steps=[
+    ("robust_scaler", RobustScaler()),
+    ("poly", PolynomialFeatures(degree=1, include_bias=False))
+])
 
-preprocessing = ColumnTransformer(
+preprocessor = ColumnTransformer(
     transformers=[
-        ('ordinal_encoder', OrdinalEncoder(categories='auto'), ordinal_encoder_column),
-        ('one_hot', OneHotEncoder(drop='first'), one_hot_encoder_column),
-        ('robust_scaler_poly', pipeline_robust, robust_columns),
-
+        ("ordinal_encoder", OrdinalEncoder(categories="auto"), ordinal_encoder_column),
+        ("one_hot", OneHotEncoder(drop="first"), one_hot_encoder_column),
+        ("robust_scaler_poly", pipeline_robust, robust_columns),
     ],
-    remainder='passthrough'
 )
-
-
 param_grid = {
-    'regressor__preprocessor__robust_scaler_poly__poly__degree': [1, 2, 3],
-    'regressor__reg__alpha': [1E-2, 5E-2, 0.1, 0.5, 1, 5, 10, 20],
+    "regressor__preprocessor__robust_scaler_poly__poly__degree": [1, 2, 3],
+    "regressor__reg__alpha": [1E-2, 5E-2, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0],
 }
-
 
 grid_search = grid_search_cv_regressor(
     regressor=Ridge(),
-    preprocessor=preprocessing,
-    target_transformer=QuantileTransformer(output_distribution='normal'),
-    param_grid=param_grid
+    preprocessor=preprocessor,
+    target_transformer=QuantileTransformer(output_distribution="normal"),
+    param_grid=param_grid,
 )
-
 
 grid_search.fit(x, y)
 print(grid_search.best_params_)
@@ -77,20 +71,25 @@ plot_coefs(coefs)
 
 
 regressors = {
-    'DummyRegressor': {
-        'preprocessor': None,
-        'regressor': DummyRegressor(strategy='mean'),
-        'target_transformer': None
+    "DummyRegressor": {
+        "preprocessor": None,
+        "regressor": DummyRegressor(strategy="mean"),
+        "target_transformer": None,
     },
-    'LinearRegressor': {
-        'preprocessor': preprocessing,
-        'regressor': LinearRegression(),
-        'target_transformer': None
+    "LinearRegression": {
+        "preprocessor": preprocessor,
+        "regressor": LinearRegression(),
+        "target_transformer": None,
     },
-    'Ridge_grid': {
-        'preprocessor': grid_search.best_estimator_.regressor_['preprocessor'],
-        'regressor': grid_search.best_estimator_.regressor_['reg'],
-        'target_transformer': grid_search.best_estimator_.transformer_,
+    "LinearRegression_target": {
+        "preprocessor": preprocessor,
+        "regressor": LinearRegression(),
+        "target_transformer": QuantileTransformer(output_distribution="normal"),
+    },
+    "Ridge_grid_search": {
+        "preprocessor": grid_search.best_estimator_.regressor_["preprocessor"],
+        "regressor": grid_search.best_estimator_.regressor_["reg"],
+        "target_transformer": grid_search.best_estimator_.transformer_,
     },
 }
 
@@ -108,5 +107,13 @@ metrics(df_results)
 
 plot_residues_estimator(grid_search.best_estimator_, x, y)
 
-coefs[coefs['coeficients'].between(-0.2, 0.2) & (coefs['coeficients'] != 0)]
+coefs_filtered = coefs[(~coefs['coeficients'].between(-0.7, 0.7)) & (coefs['coeficients'] != 0)]
+plot_coefs(coefs_filtered)
 
+coefs_filtered
+
+
+grid_search.best_estimator_
+
+model_file = 'ridge_polyfeat_target_quantile.joblib'
+dump(grid_search.best_estimator_, model_file)
