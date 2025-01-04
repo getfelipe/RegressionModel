@@ -4,15 +4,12 @@ import numpy as np
 import geopandas as gpd
 import pydeck as pdk
 import shapely
-from joblib import load 
+from joblib import load
 
 
-
-housing_clean = r'/home/felipe/Documents/RegressionModel/housing_manipulated.parquet'
-gdf_counties = r'/home/felipe/Documents/RegressionModel/gdf_counties.parquet'
-housing_manipulated = r'/home/felipe/Documents/RegressionModel/housing_manipulated.parquet'
-california_counties = r'/home/felipe/Documents/RegressionModel/california_counties.geojson'
-ridge_poly_model = r'/home/felipe/Documents/RegressionModel/ridge_polyfeat_target_quantile.joblib'
+housing_clean = 'housing_manipulated.parquet'
+gdf_counties = 'gdf_counties.parquet'
+ridge_poly_model = 'ridge_polyfeat_target_quantile.joblib'
 
 
 @st.cache_data
