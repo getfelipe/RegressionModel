@@ -1,7 +1,7 @@
 
 # Previsão de Preços de Casas com Regressão Linear 
 
-Aplicando os processos de um projeto de Data Science, desde da análise exploratória até o deploy do aplicativo, que tem como objetivo prever os preços dos imóveis localizados na região da Califórnia, os condados, para compra através da idade do móvel, região e renda do possível proprietário.
+Aplicando os processos de um projeto de Data Science, desde a análise exploratória até o deploy do aplicativo, que tem como objetivo prever os preços dos imóveis localizados na região da Califórnia, os condados, para compra através da idade do móvel, região e renda do possível proprietário.
 
 Foi utilizado dados geográficos para mapear as regiões e extrair insights, como a biblioteca folium e outras. 
 
