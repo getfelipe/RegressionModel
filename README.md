@@ -5,10 +5,6 @@ Aplicando os processos de um projeto de Data Science, desde da análise explorat
 
 Consulte aqui: https://app-california-properties-price.onrender.com/
 
-## Feedback
-
-Como a base que foi utilizada para treinar dados não possía muitos dados limpos, algumas previsões dos preços de imóveis não são muito precisas, e também visto que foi aplicado o RobustScaler, valores muito grande da renda ou muito pequeno acaba não performando muito bem, pois o RobustScaler pega valores que estão mais centralizados.
-
 
 ## Lessons Learned
 
@@ -18,4 +14,8 @@ Criação de Pipeline para executar o modelo, utilizando transformações na col
 ## Screenshots
 
 ![App Screenshot](https://github.com/getfelipe/RegressionModel-PropertyPrice/blob/master/california-properties.png)
+
+## Feedback
+
+Como a base que foi utilizada para treinar dados não possuía muitos dados limpos, algumas previsões dos preços de imóveis não são muito precisas, e também visto que foi aplicado o RobustScaler, valores muito grande da renda ou muito pequeno acaba não performando muito bem, pois o RobustScaler pega valores que estão mais centralizados.
 
